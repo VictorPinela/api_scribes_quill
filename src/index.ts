@@ -30,12 +30,12 @@ app.get('/', (req: Request, res: Response) => {
   res.json({ message: '🚀 API do Scribe\'s Quill está funcionando!' });
 });
 
-app.use('/api/personagens', personagemRoutes);
+app.use('/personagens', personagemRoutes);
 
 app.use(/(.*)/, (req: Request, res: Response) => {
   res.status(404).json({ message: 'Rota não encontrada' });
 });
 
 app.listen(port, () => {
-  console.log(`⚡ Servidor rodando em http://localhost:${port}`);
+  console.log(`⚡ Servidor rodando na porta ${port}`);
 });
