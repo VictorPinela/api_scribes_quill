@@ -2,8 +2,10 @@ import express, { Express, Request, Response } from "express";
 import cors from "cors";
 import dotenv from "dotenv";
 import mongoose from "mongoose";
-import personagemRoutes from "./routes/personagem";
-import usuarioRoutes from "./routes/usuario";
+import characterRoutes from "./routes/character";
+import userRoutes from "./routes/user";
+import authRoutes from "./routes/auth";
+import { authenticateToken } from "./middleware/auth";
 
 dotenv.config({ quiet: true });
 
@@ -35,8 +37,10 @@ app.get("/", (req: Request, res: Response) => {
   res.json({ message: "🚀 API do Scribe's Quill está funcionando!" });
 });
 
-app.use("/personagens", personagemRoutes);
-app.use("/usuarios", usuarioRoutes);
+app.use("/auth", authRoutes);
+
+app.use("/characters", authenticateToken, characterRoutes);
+app.use("/users", authenticateToken, userRoutes);
 
 app.use(/(.*)/, (req: Request, res: Response) => {
   res.status(404).json({ message: "Rota não encontrada" });
