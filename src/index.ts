@@ -9,22 +9,28 @@ import { authenticateToken } from "./middleware/auth";
 
 dotenv.config({ quiet: true });
 
+if (
+  !process.env.MONGODB_URI ||
+  !process.env.FRONTEND_URL ||
+  !process.env.PORT
+) {
+  console.error("❌ Erro com variaveis de ambiente");
+  process.exit(1);
+}
+
 const app: Express = express();
-const port = process.env.PORT || 3001;
+const port = process.env.PORT;
 
 app.use(express.json());
 app.use(
   cors({
-    origin: process.env.FRONTEND_URL || "http://localhost:5173",
+    origin: process.env.FRONTEND_URL,
     credentials: true,
   })
 );
 
-const mongoURI =
-  process.env.MONGODB_URI || "mongodb://localhost:27017/scribesquill";
-
 mongoose
-  .connect(mongoURI)
+  .connect(process.env.MONGODB_URI)
   .then(() => {
     console.log("✅ Conectado ao MongoDB com sucesso!");
   })
@@ -43,9 +49,9 @@ app.use("/characters", authenticateToken, characterRoutes);
 app.use("/users", authenticateToken, userRoutes);
 
 app.use(/(.*)/, (req: Request, res: Response) => {
-  res.status(404).json({ message: "Rota não encontrada" });
+  res.status(404).json({ message: "Rota invalida" });
 });
 
 app.listen(port, () => {
-  console.log(`⚡ Servidor rodando na porta ${port}`);
+  console.log(`⚡ Servidor rodando em http://localhost:${port}`);
 });
