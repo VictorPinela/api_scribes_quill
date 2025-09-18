@@ -5,7 +5,7 @@ const router = express.Router();
 
 router.get("/", async (req: Request, res: Response) => {
   try {
-    const users = await User.find().select("-password").populate("character");
+    const users = await User.find().select("-password").populate("characters");
     res.json(users);
   } catch (error) {
     res.status(500).json({ message: "Erro ao buscar usuários", error });
@@ -16,7 +16,7 @@ router.get("/:id", async (req: Request, res: Response) => {
   try {
     const user = await User.findById(req.params.id)
       .select("-password")
-      .populate("character");
+      .populate("characters");
     if (!user) {
       return res.status(404).json({ message: "Usuário não encontrado" });
     }

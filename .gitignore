@@ -21,6 +21,7 @@ logs
 # Builds e diretórios de output
 build/
 .next/
+dist/
 
 # IDE/Editor
 .vscode/

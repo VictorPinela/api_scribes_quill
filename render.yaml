@@ -1,0 +1,16 @@
+# render.yaml
+services:
+  - type: web
+    name: api-scribes-quill
+    env: node
+    buildCommand: npm install && npm run build
+    startCommand: npm start
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: MONGODB_URI
+        fromSecret: MONGODB_URI
+      - key: JWT_SECRET
+        fromSecret: JWT_SECRET
+      - key: FRONTEND_URL
+        value: https://html-scribes-quill.vercel.app

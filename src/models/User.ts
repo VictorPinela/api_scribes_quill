@@ -5,7 +5,7 @@ export interface IUser extends Document {
   name: string;
   email: string;
   password: string;
-  character: Types.ObjectId[];
+  characters: Types.ObjectId[];
   createdAt?: Date;
   comparePassword(candidatePassword: string): Promise<boolean>;
 }
@@ -35,7 +35,7 @@ const UserSchema = new Schema<IUser>(
   }
 );
 
-UserSchema.virtual(`character`, {
+UserSchema.virtual(`characters`, {
   ref: "Character",
   localField: "_id",
   foreignField: "userId",

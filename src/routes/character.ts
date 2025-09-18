@@ -7,11 +7,12 @@ router.use(authenticateToken);
 
 router.get("/", async (req: AuthenticatedRequest, res: Response) => {
   try {
-    console.log(req.user);
     const characters = await Character.find({ userId: req.user?.userId });
     res.json(characters);
-  } catch (error) {
-    res.status(500).json({ message: "Erro ao buscar personagens", error });
+  } catch (error: any) {
+    res
+      .status(500)
+      .json({ message: "Erro ao buscar personagens", error: error.message });
   }
 });
 
@@ -25,8 +26,10 @@ router.get("/:id", async (req: AuthenticatedRequest, res: Response) => {
       return res.status(404).json({ message: "Personagem não encontrado" });
     }
     res.json(character);
-  } catch (error) {
-    res.status(500).json({ message: "Erro ao buscar personagem", error });
+  } catch (error: any) {
+    res
+      .status(500)
+      .json({ message: "Erro ao buscar personagem", error: error.message });
   }
 });
 
@@ -38,8 +41,10 @@ router.post("/", async (req: AuthenticatedRequest, res: Response) => {
     });
     const savedCharacter = await newCharacter.save();
     res.status(201).json(savedCharacter);
-  } catch (error) {
-    res.status(400).json({ message: "Erro ao criar personagem", error });
+  } catch (error: any) {
+    res
+      .status(400)
+      .json({ message: "Erro ao criar personagem", error: error.message });
   }
 });
 
@@ -69,8 +74,10 @@ router.put("/:id", async (req: AuthenticatedRequest, res: Response) => {
     );
 
     res.json(updatedCharacter);
-  } catch (error) {
-    res.status(400).json({ message: "Erro ao atualizar personagem", error });
+  } catch (error: any) {
+    res
+      .status(400)
+      .json({ message: "Erro ao atualizar personagem", error: error.message });
   }
 });
 
@@ -88,8 +95,10 @@ router.delete("/:id", async (req: AuthenticatedRequest, res: Response) => {
     await Character.findByIdAndDelete(req.params.id);
 
     res.json({ message: "Personagem deletado com sucesso" });
-  } catch (error) {
-    res.status(500).json({ message: "Erro ao deletar personagem", error });
+  } catch (error: any) {
+    res
+      .status(500)
+      .json({ message: "Erro ao deletar personagem", error: error.message });
   }
 });
 
