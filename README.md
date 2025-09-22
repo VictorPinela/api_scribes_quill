@@ -84,16 +84,16 @@ npm start
 - **JWT_EXPIRES_IN** - Tempo de expiração do token
 - **FRONTEND_URL** Url para o Front-End
 
-# 📡 Endpoints da API
+## 📡 Endpoints da API
 
-## Autenticação
+### Autenticação
 
 > - [POST /auth/register](#Criar-usuário) - Criar usuário
 > - [POST /auth/login](#Login) - Login
 > - [POST /auth/logout](#Logout) - Logout
 > - [GET /auth/me](#User-atual) - User atual
 
-## Personagens
+### Personagens
 
 > - [GET /characters](#GET/characters) - Listar personagens do usuário
 > - [POST /characters](#Criar-Personagem) - Criar personagem
@@ -101,7 +101,7 @@ npm start
 > - [PUT /characters/:id](#PUT/characters/:id) - Atualizar personagem
 > - [DELETE /characters/:id](#DELETE/characters/:id) - Deletar personagem
 
-## Usuarios
+### Usuarios
 
 > - [GET /users](#GET/users) - Listar usuarios
 > - [GET /users/:id](#GET/users/:id) - Buscar usuario
@@ -215,4 +215,4 @@ Este projeto está sob a licença MIT. Veja o arquivo LICENSE para detalhes.
 
 Este projeto segue as regras da 5ª edição de Dungeons & Dragons e é compatível com a System Reference Document (SRD).
 
-**Desenvolvido com ❤️ para a comunidade RPGista**
+## Desenvolvido com ❤️ para a comunidade RPGista

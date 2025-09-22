@@ -5,6 +5,11 @@ export interface IUser extends Document {
   name: string;
   email: string;
   password: string;
+  isVerified: boolean;
+  verificationToken?: string | undefined;
+  verificationTokenExpires?: Date | undefined;
+  resetPasswordToken?: string;
+  resetPasswordExpires?: Date;
   characters: Types.ObjectId[];
   createdAt?: Date;
   comparePassword(candidatePassword: string): Promise<boolean>;
@@ -27,11 +32,31 @@ const UserSchema = new Schema<IUser>(
       required: true,
       minlength: 6,
     },
+    isVerified: {
+      type: Boolean,
+      default: false,
+    },
+    verificationToken: {
+      type: String,
+      required: false,
+    },
+    verificationTokenExpires: {
+      type: Date,
+      required: false,
+    },
+    resetPasswordToken: {
+      type: String,
+      required: false,
+    },
+    resetPasswordExpires: {
+      type: Date,
+      required: false,
+    },
   },
   {
     timestamps: { createdAt: true, updatedAt: false },
     versionKey: false,
-    toJSON: { virtuals: true },
+    toJSON: { virtuals: [`characters`] },
   }
 );
 

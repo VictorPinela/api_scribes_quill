@@ -1,6 +1,7 @@
 import express, { Request, Response } from "express";
-import { Character } from "../models/Character";
+import { Character, ICharacter } from "../models/Character";
 import { AuthenticatedRequest, authenticateToken } from "../middleware/auth";
+import { QueryOptions } from "mongoose";
 
 const router = express.Router();
 router.use(authenticateToken);
@@ -59,18 +60,15 @@ router.put("/:id", async (req: AuthenticatedRequest, res: Response) => {
       return res.status(404).json({ message: "Personagem não encontrado" });
     }
 
-    if (req.body.hp) {
-      if (req.body.hp.current == undefined)
-        req.body.hp.current = character.hp.current;
-      if (req.body.hp.max == undefined) req.body.hp.max = character.hp.max;
-      if (req.body.hp.temporary == undefined)
-        req.body.hp.temporary = character.hp.temporary;
-    }
+    const body = dataVerification(character.toObject(), req.body);
 
     const updatedCharacter = await Character.findByIdAndUpdate(
       req.params.id,
-      req.body,
-      { new: true, runValidators: true }
+      body,
+      {
+        new: true,
+        runValidators: true,
+      }
     );
 
     res.json(updatedCharacter);
@@ -101,5 +99,83 @@ router.delete("/:id", async (req: AuthenticatedRequest, res: Response) => {
       .json({ message: "Erro ao deletar personagem", error: error.message });
   }
 });
+
+function dataVerification(character: any, body: Request["body"]) {
+  console.log("entrou dataVerification");
+  if (body.hp) {
+    console.log("possui body.hp");
+    body.hp = {
+      ...character.hp,
+      ...body.hp,
+    };
+  }
+  if (body.stats) {
+    console.log("possui body.stats");
+    body.stats = {
+      ...character.stats,
+      ...body.stats,
+    };
+  }
+  if (body.proficiencies) {
+    console.log("possui body.proficiencies");
+    body.proficiencies = {
+      ...character.proficiencies,
+      ...body.proficiencies,
+    };
+  }
+  if (body.features) {
+    console.log("possui body.features");
+    body.features = {
+      ...character.features,
+      ...body.features,
+    };
+  }
+  if (body.equipment) {
+    console.log("possui body.equipment");
+    if (body.equipment.items) {
+      console.log("possui body.equipment.items");
+      body.equipment.items = {
+        ...character.equipment.items,
+        ...body.equipment.items,
+      };
+    }
+    if (body.equipment.currency) {
+      console.log("possui body.equipment.currency");
+      body.equipment.currency = {
+        ...character.equipment.currency,
+        ...body.equipment.currency,
+      };
+    }
+  }
+  if (body.spells) {
+    console.log("possui body.spells");
+    if (body.spells?.slots) {
+      console.log("possui body.spells.slots");
+      body.spells.slots = {
+        ...character.spells.slots,
+        ...body.spells.slots,
+      };
+    }
+    if (body.spells?.spells) {
+      console.log("possui body.spells.spells");
+      body.spells.spells = {
+        ...character.spells.spells,
+        ...body.spells.spells,
+      };
+    }
+    body.spells = {
+      ...character.spells,
+      ...body.spells,
+    };
+  }
+  if (body.appearance) {
+    console.log("possui body.appearance");
+    body.appearance = {
+      ...character.appearance,
+      ...body.appearance,
+    };
+  }
+  return body;
+}
 
 export default router;

@@ -1,6 +1,7 @@
 import { Request, Response, NextFunction } from "express";
 import { verifyToken, JwtPayload } from "../utils/auth";
 import { BlacklistedToken } from "../models/BlacklistedToken";
+import { User } from "../models/User";
 
 export interface AuthenticatedRequest extends Request {
   user?: JwtPayload;

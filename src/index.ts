@@ -5,6 +5,10 @@ import mongoose from "mongoose";
 import characterRoutes from "./routes/character";
 import userRoutes from "./routes/user";
 import authRoutes from "./routes/auth";
+import backgroundRoutes from "./routes/background";
+import classRoutes from "./routes/class";
+import specieRoutes from "./routes/specie";
+import spellRoutes from "./routes/spell";
 import { authenticateToken } from "./middleware/auth";
 
 dotenv.config({ quiet: true });
@@ -24,7 +28,7 @@ const port = process.env.PORT;
 app.use(express.json());
 app.use(
   cors({
-    origin: process.env.FRONTEND_URL,
+    origin: [process.env.FRONTEND_URL, "http://localhost:5173"],
     credentials: true,
   })
 );
@@ -47,6 +51,10 @@ app.use("/auth", authRoutes);
 
 app.use("/characters", authenticateToken, characterRoutes);
 app.use("/users", authenticateToken, userRoutes);
+app.use("/backgrounds", authenticateToken, backgroundRoutes);
+app.use("/classes", authenticateToken, classRoutes);
+app.use("/species", authenticateToken, specieRoutes);
+app.use("/spells", authenticateToken, spellRoutes);
 
 app.use(/(.*)/, (req: Request, res: Response) => {
   res.status(404).json({ message: "Rota invalida" });
