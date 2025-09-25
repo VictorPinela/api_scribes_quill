@@ -1,5 +1,30 @@
 import { Schema, model, Document, Types } from "mongoose";
 
+export interface IStats {
+  value: number;
+  modifier: number;
+  savingThrows: boolean;
+}
+
+const statsModel = {
+  value: { type: Number, required: true, min: 1, max: 30, defaut: 10 },
+  modifier: { type: Number, required: true },
+  savingThrows: { type: Boolean, required: true, default: false },
+};
+
+export interface ISkills {
+  stats: string;
+  proficient: boolean;
+  expertise: boolean;
+  modifier: number;
+}
+
+const skillModel = {
+  stats: { type: String, required: true },
+  proficient: { type: Boolean, required: true, default: false },
+  expertise: { type: Boolean, required: true, default: false },
+  modifier: { type: Number, required: true },
+};
 export interface ICharacter extends Document {
   name: string;
   level: number;
@@ -14,33 +39,36 @@ export interface ICharacter extends Document {
     max: number;
     temporary: number;
   };
+  armorClass: number;
+  initiative: number;
+  speed: number;
   stats: {
-    strength: number;
-    dexterity: number;
-    constitution: number;
-    intelligence: number;
-    wisdom: number;
-    charisma: number;
+    strength: IStats;
+    dexterity: IStats;
+    constitution: IStats;
+    intelligence: IStats;
+    wisdom: IStats;
+    charisma: IStats;
   };
   skills: {
-    acrobatics: boolean;
-    animalHandling: boolean;
-    arcana: boolean;
-    athletics: boolean;
-    deception: boolean;
-    history: boolean;
-    insight: boolean;
-    intimidation: boolean;
-    investigation: boolean;
-    medicine: boolean;
-    nature: boolean;
-    perception: boolean;
-    performance: boolean;
-    persuasion: boolean;
-    religion: boolean;
-    sleightOfHand: boolean;
-    stealth: boolean;
-    survival: boolean;
+    acrobatics: ISkills;
+    animalHandling: ISkills;
+    arcana: ISkills;
+    athletics: ISkills;
+    deception: ISkills;
+    history: ISkills;
+    insight: ISkills;
+    intimidation: ISkills;
+    investigation: ISkills;
+    medicine: ISkills;
+    nature: ISkills;
+    perception: ISkills;
+    performance: ISkills;
+    persuasion: ISkills;
+    religion: ISkills;
+    sleightOfHand: ISkills;
+    stealth: ISkills;
+    survival: ISkills;
   };
   proficiencies: {
     armor: string[];
@@ -55,18 +83,18 @@ export interface ICharacter extends Document {
     flaws: string;
   };
   feats: string[];
-  backpack: {
+  inventory: {
     equipment: {
       armor?: [
         {
           name: string;
           quantity: number;
-          tipe: string;
+          type: string;
           armorClass: string;
           minStrength?: number;
           stealthDisadvantage: boolean;
           weight: number;
-          equiped: boolean;
+          equipped: boolean;
           requiresAttunement: boolean;
         }
       ];
@@ -76,7 +104,7 @@ export interface ICharacter extends Document {
           quantity: number;
           armorClass: string;
           weight: number;
-          equiped: boolean;
+          equipped: boolean;
           requiresAttunement: boolean;
         }
       ];
@@ -84,16 +112,26 @@ export interface ICharacter extends Document {
         {
           name: string;
           quantity: number;
-          tipe: string;
+          type: string;
           damageDice: string;
           damageTipe: string;
           properties: string;
           mastery: string;
           weight: number;
-          equiped: boolean;
+          equipped: boolean;
           dualHanded: boolean;
           munition: number;
           requiresAttunement: boolean;
+        }
+      ];
+      magicItems: [
+        {
+          name: string;
+          quantity: number;
+          weight: number;
+          equipped: boolean;
+          requiresAttunement: boolean;
+          description: string;
         }
       ];
       rightHand: string;
@@ -118,8 +156,7 @@ export interface ICharacter extends Document {
     spellcastingAbility: string;
     spellSaveDC: number;
     spellAttackBonus: number;
-    known: Types.ObjectId[];
-    prepared: Types.ObjectId[];
+    spells: Types.ObjectId[];
     slots: Array<{
       level: number;
       total: number;
@@ -143,55 +180,65 @@ export interface ICharacter extends Document {
 
 const CharacterSchema = new Schema<ICharacter>(
   {
-    name: { type: String, required: true },
+    name: { type: String, required: true, trim: true, toLowerCase: true },
     level: { type: Number, required: true, default: 1 },
     class: {
       type: Schema.Types.ObjectId,
       ref: "Class",
+      required: true,
     },
     subClass: { type: String, required: false },
     specie: {
       type: Schema.Types.ObjectId,
       ref: "Specie",
+      required: true,
     },
     background: {
       type: Schema.Types.ObjectId,
       ref: "Background",
+      required: true,
     },
-    alignment: { type: String, required: false },
+    alignment: {
+      type: String,
+      required: false,
+      enum: ["LG", "LN", "LE", "NG", "NN", "NE", "CG", "CN", "CE"],
+    },
     experience: { type: Number, required: true, default: 0 },
     hp: {
       current: { type: Number, required: true, default: 10 },
       max: { type: Number, required: true, default: 10 },
       temporary: { type: Number, required: true, default: 0 },
     },
+    armorClass: { type: Number, required: true, default: 10 },
+    initiative: { type: Number, default: 0 },
+    speed: { type: Number, required: true, min: 0 },
     stats: {
-      strength: { type: Number, required: true, default: 10 },
-      dexterity: { type: Number, required: true, default: 10 },
-      constitution: { type: Number, required: true, default: 10 },
-      intelligence: { type: Number, required: true, default: 10 },
-      wisdom: { type: Number, required: true, default: 10 },
-      charisma: { type: Number, required: true, default: 10 },
+      strength: { type: statsModel, reuired: true, _id: false },
+      dexterity: { type: statsModel, reuired: true, _id: false },
+      constitution: { type: statsModel, reuired: true, _id: false },
+      intelligence: { type: statsModel, reuired: true, _id: false },
+      wisdom: { type: statsModel, reuired: true, _id: false },
+      charisma: { type: statsModel, reuired: true, _id: false },
     },
     skills: {
-      acrobatics: { type: Boolean, required: true, default: false },
-      animalHandling: { type: Boolean, required: true, default: false },
-      arcana: { type: Boolean, required: true, default: false },
-      athletics: { type: Boolean, required: true, default: false },
-      deception: { type: Boolean, required: true, default: false },
-      history: { type: Boolean, required: true, default: false },
-      insight: { type: Boolean, required: true, default: false },
-      intimidation: { type: Boolean, required: true, default: false },
-      investigation: { type: Boolean, required: true, default: false },
-      medicine: { type: Boolean, required: true, default: false },
-      nature: { type: Boolean, required: true, default: false },
-      perception: { type: Boolean, required: true, default: false },
-      performance: { type: Boolean, required: true, default: false },
-      persuasion: { type: Boolean, required: true, default: false },
-      religion: { type: Boolean, required: true, default: false },
-      sleightOfHand: { type: Boolean, required: true, default: false },
-      stealth: { type: Boolean, required: true, default: false },
-      survival: { type: Boolean, required: true, default: false },
+      acrobatics: { type: skillModel, reuired: true, _id: false },
+      animalHandling: { type: skillModel, reuired: true, _id: false },
+      arcana: { type: skillModel, reuired: true, _id: false },
+      athletics: { type: skillModel, reuired: true, _id: false },
+      deception: { type: skillModel, reuired: true, _id: false },
+      history: { type: skillModel, reuired: true, _id: false },
+      insight: { type: skillModel, reuired: true, _id: false },
+      intimidation: { type: skillModel, reuired: true, _id: false },
+      investigation: { type: skillModel, reuired: true, _id: false },
+      medicine: { type: skillModel, reuired: true, _id: false },
+      nature: { type: skillModel, reuired: true, _id: false },
+      perception: { type: skillModel, reuired: true, _id: false },
+      performance: { type: skillModel, reuired: true, _id: false },
+      persuasion: { type: skillModel, reuired: true, _id: false },
+      religion: { type: skillModel, reuired: true, _id: false },
+      sleightOfHand: { type: skillModel, reuired: true, _id: false },
+      stealth: { type: skillModel, reuired: true, _id: false },
+      survival: { type: skillModel, reuired: true, _id: false },
     },
     proficiencies: {
       armor: { type: [String], required: true },
@@ -206,12 +253,18 @@ const CharacterSchema = new Schema<ICharacter>(
       flaws: { type: String, required: false },
     },
     feats: { type: [String], required: true },
-    backpack: {
+    inventory: {
       equipment: {
         armor: [
           new Schema(
             {
-              name: { type: String, required: true, unique: true },
+              name: {
+                type: String,
+                required: true,
+                unique: true,
+                trim: true,
+                toLowerCase: true,
+              },
               quantity: { type: Number, required: true },
               type: { type: String, required: true },
               armorClass: { type: String, required: true },
@@ -227,7 +280,13 @@ const CharacterSchema = new Schema<ICharacter>(
         shield: [
           new Schema(
             {
-              name: { type: String, required: true, unique: true },
+              name: {
+                type: String,
+                required: true,
+                unique: true,
+                trim: true,
+                toLowerCase: true,
+              },
               quantity: { type: Number, required: true },
               armorClass: { type: String, required: true },
               weight: { type: Number, required: true },
@@ -240,7 +299,13 @@ const CharacterSchema = new Schema<ICharacter>(
         weapon: [
           new Schema(
             {
-              name: { type: String, required: true, unique: true },
+              name: {
+                type: String,
+                required: true,
+                unique: true,
+                trim: true,
+                toLowerCase: true,
+              },
               quantity: { type: Number, required: true },
               type: { type: String, required: true },
               damageDice: { type: String, required: true },
@@ -256,14 +321,39 @@ const CharacterSchema = new Schema<ICharacter>(
             { _id: false, required: false }
           ),
         ],
-        rightHand: { type: String, required: true },
-        lefttHand: { type: String, required: true },
+        magicItems: [
+          new Schema(
+            {
+              name: {
+                type: String,
+                required: true,
+                unique: true,
+                trim: true,
+                toLowerCase: true,
+              },
+              quantity: { type: Number, required: true },
+              weight: { type: Number, required: true },
+              equipped: { type: Boolean, required: true },
+              requiresAttunement: { type: Boolean, required: true },
+              description: { type: String, required: true },
+            },
+            { _id: false, required: false }
+          ),
+        ],
+        rightHand: { type: String, required: true, defaut: "livre" },
+        lefttHand: { type: String, required: true, defaut: "livre" },
         attuned: { type: [String], required: true },
       },
       items: [
         new Schema(
           {
-            name: { type: String, required: true, unique: true },
+            name: {
+              type: String,
+              required: true,
+              unique: true,
+              trim: true,
+              toLowerCase: true,
+            },
             quantity: { type: Number, required: true },
             weight: { type: Number, required: true },
             description: { type: String, required: true },
@@ -304,16 +394,11 @@ const CharacterSchema = new Schema<ICharacter>(
           { _id: false, required: false }
         ),
       ],
-      known: [
+      spells: [
         {
           type: Schema.Types.ObjectId,
           ref: "Spell",
-        },
-      ],
-      prepared: [
-        {
-          type: Schema.Types.ObjectId,
-          ref: "Spell",
+          required: true,
         },
       ],
     },
@@ -333,6 +418,9 @@ const CharacterSchema = new Schema<ICharacter>(
   {
     timestamps: { createdAt: true, updatedAt: false },
     versionKey: false,
+    toJSON: {
+      virtuals: ["class", "specie", "background", "spells.spells", "userId"],
+    },
   }
 );
 

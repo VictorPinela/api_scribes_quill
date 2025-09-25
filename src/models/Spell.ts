@@ -29,12 +29,14 @@ const SpellSchema = new Schema<ISpell>(
       required: true,
       unique: true,
       trim: true,
+      index: true,
     },
     level: {
       type: Number,
       required: true,
       min: 0,
       max: 9,
+      index: true,
     },
     school: {
       type: String,
@@ -49,6 +51,7 @@ const SpellSchema = new Schema<ISpell>(
         "Necromancy",
         "Transmutation",
       ],
+      index: true,
     },
     class: {
       type: [String],
@@ -111,7 +114,7 @@ const SpellSchema = new Schema<ISpell>(
   }
 );
 
-SpellSchema.index({ name: 1, level: 1, school: 1 });
+// SpellSchema.index({ name: 1, level: 1, school: 1 });
 
 // SpellSchema.methods.uperrCasting = async function (
 //   candidatePassword: string

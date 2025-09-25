@@ -8,7 +8,14 @@ router.use(authenticateToken);
 
 router.get("/", async (req: AuthenticatedRequest, res: Response) => {
   try {
-    const characters = await Character.find({ userId: req.user?.userId });
+    const characters = await Character.find({
+      userId: req.user?.userId,
+    })
+      .populate("class")
+      .populate("specie")
+      .populate("background")
+      .populate("spells.spells")
+      .populate("userId");
     res.json(characters);
   } catch (error: any) {
     res

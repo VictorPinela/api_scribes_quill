@@ -16,6 +16,7 @@ const BackgroundSchema = new Schema<IBackground>(
       required: true,
       unique: true,
       trim: true,
+      index: true,
     },
     abilityScore: [
       {
@@ -50,6 +51,6 @@ const BackgroundSchema = new Schema<IBackground>(
   }
 );
 
-BackgroundSchema.index({ name: 1 });
+// BackgroundSchema.index({ name: 1 });
 
 export const Background = model<IBackground>("Background", BackgroundSchema);

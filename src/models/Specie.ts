@@ -22,6 +22,7 @@ const SpecieSchema = new Schema<ISpecie>(
       required: true,
       unique: true,
       trim: true,
+      index: true,
     },
     creatureType: {
       type: String,
@@ -66,6 +67,6 @@ const SpecieSchema = new Schema<ISpecie>(
   }
 );
 
-SpecieSchema.index({ name: 1 });
+// SpecieSchema.index({ name: 1 });
 
 export const Specie = model<ISpecie>("Specie", SpecieSchema);

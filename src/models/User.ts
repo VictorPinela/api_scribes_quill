@@ -12,6 +12,13 @@ export interface IUser extends Document {
   resetPasswordExpires?: Date;
   characters: Types.ObjectId[];
   createdAt?: Date;
+  preferences: {
+    theme: String;
+    notifications: {
+      email: Boolean;
+      newFeatures: Boolean;
+    };
+  };
   comparePassword(candidatePassword: string): Promise<boolean>;
 }
 
@@ -20,12 +27,17 @@ const UserSchema = new Schema<IUser>(
     name: {
       type: String,
       required: true,
+      trim: true,
+      maxLength: 100,
     },
     email: {
       type: String,
       required: true,
       unique: true,
+      lowercase: true,
+      trim: true,
       match: /^\w+([.-]?\w+)*@\w+([.-]?\w+)*(\.\w{2,3})+$/,
+      index: true,
     },
     password: {
       type: String,
@@ -51,6 +63,17 @@ const UserSchema = new Schema<IUser>(
     resetPasswordExpires: {
       type: Date,
       required: false,
+    },
+    preferences: {
+      theme: {
+        type: String,
+        enum: ["light", "dark", "auto"],
+        default: "dark",
+      },
+      notifications: {
+        email: { type: Boolean, default: true },
+        newFeatures: { type: Boolean, default: true },
+      },
     },
   },
   {

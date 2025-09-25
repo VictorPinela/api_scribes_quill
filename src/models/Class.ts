@@ -42,6 +42,7 @@ const ClassSchema = new Schema<IClass>(
       required: true,
       unique: true,
       trim: true,
+      index: true,
     },
     primaryAbility: {
       type: String,
@@ -97,18 +98,21 @@ const ClassSchema = new Schema<IClass>(
       required: false,
     },
     featuresPerLevel: [
-      {
-        level: {
-          type: Number,
-          required: true,
-          min: 1,
-          max: 20,
+      new Schema(
+        {
+          level: {
+            type: Number,
+            required: true,
+            min: 1,
+            max: 20,
+          },
+          feature: {
+            type: String,
+            required: true,
+          },
         },
-        feature: {
-          type: String,
-          required: true,
-        },
-      },
+        { _id: false, required: false }
+      ),
     ],
     features: [
       {
@@ -117,32 +121,38 @@ const ClassSchema = new Schema<IClass>(
       },
     ],
     subClass: [
-      {
-        name: {
-          type: String,
-          required: false,
-        },
-        featuresPerLevel: [
-          {
-            level: {
-              type: Number,
-              required: true,
-              min: 1,
-              max: 20,
-            },
-            feature: {
+      new Schema(
+        {
+          name: {
+            type: String,
+            required: false,
+          },
+          featuresPerLevel: [
+            new Schema(
+              {
+                level: {
+                  type: Number,
+                  required: true,
+                  min: 1,
+                  max: 20,
+                },
+                feature: {
+                  type: String,
+                  required: true,
+                },
+              },
+              { _id: false, required: false }
+            ),
+          ],
+          features: [
+            {
               type: String,
               required: true,
             },
-          },
-        ],
-        features: [
-          {
-            type: String,
-            required: true,
-          },
-        ],
-      },
+          ],
+        },
+        { _id: false, required: false }
+      ),
     ],
   },
   {
@@ -151,6 +161,6 @@ const ClassSchema = new Schema<IClass>(
   }
 );
 
-ClassSchema.index({ name: 1 });
+// ClassSchema.index({ name: 1 });
 
 export const Class = model<IClass>("Class", ClassSchema);
