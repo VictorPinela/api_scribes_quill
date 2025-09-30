@@ -1,5 +1,5 @@
 import express, { Request, Response } from "express";
-import { Spell, ISpell } from "../models/Spell";
+import { Spell } from "../models/Spell";
 import { AuthenticatedRequest, authenticateToken } from "../middleware/auth";
 
 const router = express.Router();

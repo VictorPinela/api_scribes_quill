@@ -1,6 +1,51 @@
 import { Schema, model, Document, Types } from "mongoose";
 import { enumDice, enumSkill, enumStatus, IClass } from "../types";
 
+const skillProficiencies = {
+  choose: {
+    type: Number,
+    required: true,
+  },
+  skills: [
+    {
+      type: String,
+      required: true,
+      enum: enumSkill,
+    },
+  ],
+};
+
+const featuresPerLevel = [
+  {
+    level: {
+      type: Number,
+      required: true,
+      min: 1,
+      max: 20,
+    },
+    features: [
+      {
+        type: String,
+        required: true,
+      },
+    ],
+  },
+];
+
+const subClass = [
+  {
+    name: {
+      type: String,
+      required: false,
+    },
+    featuresPerLevel: {
+      type: featuresPerLevel,
+      required: true,
+      _id: false,
+    },
+  },
+];
+
 const ClassSchema = new Schema<IClass>(
   {
     name: {
@@ -15,31 +60,18 @@ const ClassSchema = new Schema<IClass>(
       required: true,
       enum: enumStatus,
     },
-
     hpDice: {
       type: String,
       required: true,
       enum: enumDice,
     },
     savingThrowProficiencies: [
-      {
-        type: String,
-        required: true,
-        enum: enumStatus,
-      },
+      { type: String, required: true, enum: enumStatus },
     ],
     skillProficiencies: {
-      choose: {
-        type: Number,
-        required: true,
-      },
-      skills: [
-        {
-          type: String,
-          required: true,
-          enum: enumSkill,
-        },
-      ],
+      type: skillProficiencies,
+      required: true,
+      _id: false,
     },
     weaponProficiencies: [
       {
@@ -67,55 +99,16 @@ const ClassSchema = new Schema<IClass>(
       type: String,
       required: false,
     },
-    featuresPerLevel: [
-      new Schema(
-        {
-          level: {
-            type: Number,
-            required: true,
-            min: 1,
-            max: 20,
-          },
-          features: [
-            {
-              type: String,
-              required: true,
-            },
-          ],
-        },
-        { _id: false, required: false }
-      ),
-    ],
-    subClass: [
-      new Schema(
-        {
-          name: {
-            type: String,
-            required: false,
-          },
-          featuresPerLevel: [
-            new Schema(
-              {
-                level: {
-                  type: Number,
-                  required: true,
-                  min: 1,
-                  max: 20,
-                },
-                features: [
-                  {
-                    type: String,
-                    required: true,
-                  },
-                ],
-              },
-              { _id: false, required: false }
-            ),
-          ],
-        },
-        { _id: false, required: false }
-      ),
-    ],
+    featuresPerLevel: {
+      type: [featuresPerLevel],
+      required: true,
+      _id: false,
+    },
+    subClass: {
+      type: [subClass],
+      required: true,
+      _id: false,
+    },
   },
   {
     timestamps: false,

@@ -1,5 +1,5 @@
 import express, { Request, Response } from "express";
-import { Specie, ISpecie } from "../models/Specie";
+import { Specie } from "../models/Specie";
 import { AuthenticatedRequest, authenticateToken } from "../middleware/auth";
 
 const router = express.Router();

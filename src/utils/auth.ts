@@ -1,6 +1,6 @@
 import jwt from "jsonwebtoken";
 import ms from "ms";
-import { IUser } from "../models/User";
+import { IUser } from "../types";
 
 export interface JwtPayload {
   userId: string;

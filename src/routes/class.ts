@@ -1,5 +1,5 @@
 import express, { Request, Response } from "express";
-import { Class, IClass } from "../models/Class";
+import { Class } from "../models/Class";
 import { AuthenticatedRequest, authenticateToken } from "../middleware/auth";
 
 const router = express.Router();

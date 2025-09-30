@@ -1,5 +1,5 @@
 import express, { Request, Response } from "express";
-import { Character, ICharacter } from "../models/Character";
+import { Character } from "../models/Character";
 import { AuthenticatedRequest, authenticateToken } from "../middleware/auth";
 import { QueryOptions } from "mongoose";
 

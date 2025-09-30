@@ -1,5 +1,5 @@
 import express, { Request, Response } from "express";
-import { Background, IBackground } from "../models/Background";
+import { Background } from "../models/Background";
 import { AuthenticatedRequest, authenticateToken } from "../middleware/auth";
 
 const router = express.Router();
