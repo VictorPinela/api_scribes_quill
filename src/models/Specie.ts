@@ -1,20 +1,6 @@
 import { Schema, model, Document, Types } from "mongoose";
+import { ISpecie } from "../types";
 
-export interface ISpecie extends Document {
-  name: string;
-  creatureType: string;
-  size: string;
-  speed: {
-    movement: number;
-    burrow?: number;
-    climb?: number;
-    flyw?: number;
-    swim?: number;
-  };
-  languages: string[];
-  traits?: string[];
-  info?: string;
-}
 const SpecieSchema = new Schema<ISpecie>(
   {
     name: {
@@ -66,7 +52,5 @@ const SpecieSchema = new Schema<ISpecie>(
     versionKey: false,
   }
 );
-
-// SpecieSchema.index({ name: 1 });
 
 export const Specie = model<ISpecie>("Specie", SpecieSchema);

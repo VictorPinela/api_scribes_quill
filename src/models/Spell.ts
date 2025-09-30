@@ -1,26 +1,5 @@
 import { Schema, model, Document, Types } from "mongoose";
-
-export interface ISpell extends Document {
-  name: string;
-  level: number;
-  school: string;
-  class: string[];
-  castingTime: string;
-  range: string;
-  component: {
-    verbal: boolean;
-    somatic: boolean;
-    material?: string;
-  };
-  duration: string;
-  description: string;
-  savingThrow: boolean;
-  attack: boolean;
-  higherLevels?: string[];
-  ritual: boolean;
-  concentration: boolean;
-  //   uperrCasting(candidatePassword: string): Promise<boolean>;
-}
+import { ISpell } from "../types";
 
 const SpellSchema = new Schema<ISpell>(
   {
@@ -57,6 +36,7 @@ const SpellSchema = new Schema<ISpell>(
       type: [String],
       required: true,
     },
+    prepared: { type: Boolean, required: true, default: false },
     castingTime: {
       type: String,
       required: true,

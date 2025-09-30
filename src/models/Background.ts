@@ -1,13 +1,5 @@
 import { Schema, model, Document, Types } from "mongoose";
-
-export interface IBackground extends Document {
-  name: string;
-  abilityScore: string[];
-  feat: string;
-  skillProficiencies: string[];
-  toolProficiencies: string[];
-  equipment: string;
-}
+import { enumSkill, enumStatus, IBackground } from "../types";
 
 const BackgroundSchema = new Schema<IBackground>(
   {
@@ -22,6 +14,7 @@ const BackgroundSchema = new Schema<IBackground>(
       {
         type: String,
         required: true,
+        enum: enumStatus,
       },
     ],
     feat: {
@@ -32,6 +25,7 @@ const BackgroundSchema = new Schema<IBackground>(
       {
         type: String,
         required: true,
+        enum: enumSkill,
       },
     ],
     toolProficiencies: [
@@ -50,7 +44,5 @@ const BackgroundSchema = new Schema<IBackground>(
     versionKey: false,
   }
 );
-
-// BackgroundSchema.index({ name: 1 });
 
 export const Background = model<IBackground>("Background", BackgroundSchema);

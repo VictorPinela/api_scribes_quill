@@ -1,10 +1,5 @@
 import { Schema, model, Document, Types } from "mongoose";
-
-export interface IBlacklistedToken extends Document {
-  token: string;
-  expiresAt: Date;
-  userId: Types.ObjectId;
-}
+import { IBlacklistedToken } from "../types";
 
 const BlacklistedTokenSchema = new Schema<IBlacklistedToken>({
   token: {
@@ -15,7 +10,7 @@ const BlacklistedTokenSchema = new Schema<IBlacklistedToken>({
   expiresAt: {
     type: Date,
     required: true,
-    index: { expires: 0 }, // TTL index para auto-delete
+    index: { expires: 0 },
   },
   userId: {
     type: Schema.Types.ObjectId,

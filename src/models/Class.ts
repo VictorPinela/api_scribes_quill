@@ -1,39 +1,5 @@
 import { Schema, model, Document, Types } from "mongoose";
-
-export interface IClass extends Document {
-  name: string;
-  primaryAbility: string;
-  hpDice: string;
-  savingThrowProficiencies: string[];
-  skillProficiencies: {
-    choose: number;
-    skills: string[];
-  };
-  weaponProficiencies: string[];
-  toolProficiencies: string[];
-  armorProficiencies: string[];
-  startingGear: string;
-  description?: string;
-  featuresPerLevel: [
-    {
-      level: number;
-      feature: string;
-    }
-  ];
-  features: string[];
-  subClass: [
-    {
-      name: string;
-      featuresPerLevel: [
-        {
-          level: number;
-          feature: string;
-        }
-      ];
-      features: string[];
-    }
-  ];
-}
+import { enumDice, enumSkill, enumStatus, IClass } from "../types";
 
 const ClassSchema = new Schema<IClass>(
   {
@@ -44,19 +10,22 @@ const ClassSchema = new Schema<IClass>(
       trim: true,
       index: true,
     },
-    primaryAbility: {
+    primaryStatus: {
       type: String,
       required: true,
+      enum: enumStatus,
     },
 
     hpDice: {
       type: String,
       required: true,
+      enum: enumDice,
     },
     savingThrowProficiencies: [
       {
         type: String,
         required: true,
+        enum: enumStatus,
       },
     ],
     skillProficiencies: {
@@ -68,6 +37,7 @@ const ClassSchema = new Schema<IClass>(
         {
           type: String,
           required: true,
+          enum: enumSkill,
         },
       ],
     },
@@ -106,19 +76,15 @@ const ClassSchema = new Schema<IClass>(
             min: 1,
             max: 20,
           },
-          feature: {
-            type: String,
-            required: true,
-          },
+          features: [
+            {
+              type: String,
+              required: true,
+            },
+          ],
         },
         { _id: false, required: false }
       ),
-    ],
-    features: [
-      {
-        type: String,
-        required: true,
-      },
     ],
     subClass: [
       new Schema(
@@ -136,19 +102,15 @@ const ClassSchema = new Schema<IClass>(
                   min: 1,
                   max: 20,
                 },
-                feature: {
-                  type: String,
-                  required: true,
-                },
+                features: [
+                  {
+                    type: String,
+                    required: true,
+                  },
+                ],
               },
               { _id: false, required: false }
             ),
-          ],
-          features: [
-            {
-              type: String,
-              required: true,
-            },
           ],
         },
         { _id: false, required: false }
@@ -160,7 +122,5 @@ const ClassSchema = new Schema<IClass>(
     versionKey: false,
   }
 );
-
-// ClassSchema.index({ name: 1 });
 
 export const Class = model<IClass>("Class", ClassSchema);

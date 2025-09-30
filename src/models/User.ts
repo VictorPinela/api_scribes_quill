@@ -1,26 +1,6 @@
 import { Schema, model, Document, Types } from "mongoose";
 import bcrypt from "bcryptjs";
-
-export interface IUser extends Document {
-  name: string;
-  email: string;
-  password: string;
-  isVerified: boolean;
-  verificationToken?: string | undefined;
-  verificationTokenExpires?: Date | undefined;
-  resetPasswordToken?: string;
-  resetPasswordExpires?: Date;
-  characters: Types.ObjectId[];
-  createdAt?: Date;
-  preferences: {
-    theme: String;
-    notifications: {
-      email: Boolean;
-      newFeatures: Boolean;
-    };
-  };
-  comparePassword(candidatePassword: string): Promise<boolean>;
-}
+import { IUser } from "../types";
 
 const UserSchema = new Schema<IUser>(
   {
@@ -64,17 +44,17 @@ const UserSchema = new Schema<IUser>(
       type: Date,
       required: false,
     },
-    preferences: {
-      theme: {
-        type: String,
-        enum: ["light", "dark", "auto"],
-        default: "dark",
-      },
-      notifications: {
-        email: { type: Boolean, default: true },
-        newFeatures: { type: Boolean, default: true },
-      },
-    },
+    // preferences: {
+    //   theme: {
+    //     type: String,
+    //     enum: ["light", "dark", "auto"],
+    //     default: "dark",
+    //   },
+    //   notifications: {
+    //     email: { type: Boolean, default: true },
+    //     newFeatures: { type: Boolean, default: true },
+    //   },
+    // },
   },
   {
     timestamps: { createdAt: true, updatedAt: false },
