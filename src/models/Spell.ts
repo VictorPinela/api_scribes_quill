@@ -1,4 +1,4 @@
-import { Schema, model, Document, Types } from "mongoose";
+import { Schema, model } from "mongoose";
 import { ISpell } from "../types";
 
 const SpellSchema = new Schema<ISpell>(

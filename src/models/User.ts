@@ -1,4 +1,4 @@
-import { Schema, model, Document, Types } from "mongoose";
+import { Schema, model } from "mongoose";
 import bcrypt from "bcryptjs";
 import { IUser } from "../types";
 
@@ -23,6 +23,11 @@ const UserSchema = new Schema<IUser>(
       type: String,
       required: true,
       minlength: 6,
+    },
+    role: {
+      type: String,
+      enum: ["player", "master"],
+      default: "player",
     },
     isVerified: {
       type: Boolean,

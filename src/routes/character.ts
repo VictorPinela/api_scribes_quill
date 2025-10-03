@@ -14,7 +14,7 @@ router.get("/", async (req: AuthenticatedRequest, res: Response) => {
       .populate("class")
       .populate("specie")
       .populate("background")
-      .populate("spells.spells")
+      .populate("spellsKnow")
       .populate("userId");
     res.json(characters);
   } catch (error: any) {

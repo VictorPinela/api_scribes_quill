@@ -1,4 +1,4 @@
-import { Schema, model, Document, Types } from "mongoose";
+import { Schema, model } from "mongoose";
 import { enumDice, enumSkill, enumStatus, IClass } from "../types";
 
 const skillProficiencies = {
@@ -15,6 +15,17 @@ const skillProficiencies = {
   ],
 };
 
+const features = {
+  name: {
+    type: String,
+    required: true,
+  },
+  description: {
+    type: String,
+    required: true,
+  },
+};
+
 const featuresPerLevel = [
   {
     level: {
@@ -25,7 +36,7 @@ const featuresPerLevel = [
     },
     features: [
       {
-        type: String,
+        type: features,
         required: true,
       },
     ],

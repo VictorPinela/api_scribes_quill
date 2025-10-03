@@ -32,11 +32,11 @@ router.get("/:id", async (req: Request, res: Response) => {
 
 router.put("/:id", async (req: Request, res: Response) => {
   try {
-    const { name, email } = req.body;
+    const { name, email, role } = req.body;
 
     const updatedUser = await User.findByIdAndUpdate(
       req.params.id,
-      { name, email },
+      { name, email, role },
       { new: true, runValidators: true }
     )
       .select("-password")

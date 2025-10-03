@@ -9,6 +9,7 @@ import backgroundRoutes from "./routes/background";
 import classRoutes from "./routes/class";
 import specieRoutes from "./routes/specie";
 import spellRoutes from "./routes/spell";
+import featRoutes from "./routes/feat";
 import { authenticateToken } from "./middleware/auth";
 
 dotenv.config({ quiet: true });
@@ -55,6 +56,7 @@ app.use("/backgrounds", authenticateToken, backgroundRoutes);
 app.use("/classes", authenticateToken, classRoutes);
 app.use("/species", authenticateToken, specieRoutes);
 app.use("/spells", authenticateToken, spellRoutes);
+app.use("/feats", authenticateToken, featRoutes);
 
 app.use(/(.*)/, (req: Request, res: Response) => {
   res.status(404).json({ message: "Rota invalida" });

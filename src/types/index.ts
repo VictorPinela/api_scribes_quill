@@ -3,10 +3,11 @@ import { Schema, model, Document, Types } from "mongoose";
 export interface IBackground extends Document {
   name: string;
   abilityScore: Status[];
-  feat: string;
+  feat: Types.ObjectId;
   skillProficiencies: Skill[];
   toolProficiencies: string[];
   equipment: string;
+  description?: string;
 }
 
 export interface IBlacklistedToken extends Document {
@@ -15,9 +16,14 @@ export interface IBlacklistedToken extends Document {
   userId: Types.ObjectId;
 }
 
+export interface IFeatures {
+  name: string;
+  description: string;
+}
+
 export interface IFeaturesPerLevel {
   level: number;
-  features: string[];
+  features: IFeatures[];
 }
 
 export interface ISubClass {
@@ -89,6 +95,7 @@ export interface IUser extends Document {
   name: string;
   email: string;
   password: string;
+  role: string;
   isVerified: boolean;
   verificationToken?: string | undefined;
   verificationTokenExpires?: Date | undefined;
@@ -219,7 +226,7 @@ export interface ICharacter extends Document {
       lefttHand: IEquippedInHand;
       attuned: string[];
     };
-    items?: IItems[];
+    items?: IItem[];
     currency: ICurrency;
   };
   spells?: {
@@ -280,11 +287,20 @@ export interface IMagicItems extends Document {
   description: string;
 }
 
-export interface IItems extends Document {
+export interface IItem extends Document {
   name: string;
   quantity: number;
   weight: number;
   description?: string;
+  cost?: string;
+}
+
+export interface IFeat extends Document {
+  name: string;
+  category: Category;
+  prerequisite?: string[];
+  benefit: IFeatures[];
+  repeatable: boolean;
 }
 
 export type Status =
@@ -370,4 +386,13 @@ export const enumAlignment = [
   "CG",
   "CN",
   "CE",
+];
+
+export type Category = "General" | "Origin" | "Fighting Style" | "Epic Boon";
+
+export const enumCategory = [
+  "General",
+  "Origin",
+  "Fighting Style",
+  "Epic Boon",
 ];

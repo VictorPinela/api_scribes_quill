@@ -1,4 +1,4 @@
-import { Schema, model, Document, Types } from "mongoose";
+import { Schema, model } from "mongoose";
 import { enumAlignment, enumStatus, ICharacter } from "../types";
 
 const hp = new Schema(
@@ -378,7 +378,7 @@ const CharacterSchema = new Schema<ICharacter>(
     timestamps: { createdAt: true, updatedAt: false },
     versionKey: false,
     toJSON: {
-      virtuals: ["class", "specie", "background", "spells.spells", "userId"],
+      virtuals: ["class", "specie", "background", "spellsKnow", "userId"],
     },
   }
 );

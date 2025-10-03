@@ -1,4 +1,4 @@
-import { Schema, model, Document, Types } from "mongoose";
+import { Schema, model } from "mongoose";
 import { enumSkill, enumStatus, IBackground } from "../types";
 
 const BackgroundSchema = new Schema<IBackground>(
@@ -18,7 +18,8 @@ const BackgroundSchema = new Schema<IBackground>(
       },
     ],
     feat: {
-      type: String,
+      type: Schema.Types.ObjectId,
+      ref: "Feat",
       required: true,
     },
     skillProficiencies: [
@@ -38,10 +39,17 @@ const BackgroundSchema = new Schema<IBackground>(
       type: String,
       required: true,
     },
+    description: {
+      type: String,
+      required: false,
+    },
   },
   {
     timestamps: false,
     versionKey: false,
+    toJSON: {
+      virtuals: ["feat"],
+    },
   }
 );
 
