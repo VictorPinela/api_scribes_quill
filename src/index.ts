@@ -1,4 +1,5 @@
 import express, { Express, Request, Response } from "express";
+import { authenticateToken } from "./middleware/auth";
 import cors from "cors";
 import dotenv from "dotenv";
 import mongoose from "mongoose";
@@ -10,7 +11,7 @@ import classRoutes from "./routes/class";
 import specieRoutes from "./routes/specie";
 import spellRoutes from "./routes/spell";
 import featRoutes from "./routes/feat";
-import { authenticateToken } from "./middleware/auth";
+import itemRoutes from "./routes/item";
 
 dotenv.config({ quiet: true });
 
@@ -57,6 +58,7 @@ app.use("/classes", authenticateToken, classRoutes);
 app.use("/species", authenticateToken, specieRoutes);
 app.use("/spells", authenticateToken, spellRoutes);
 app.use("/feats", authenticateToken, featRoutes);
+app.use("/item", authenticateToken, itemRoutes);
 
 app.use(/(.*)/, (req: Request, res: Response) => {
   res.status(404).json({ message: "Rota invalida" });

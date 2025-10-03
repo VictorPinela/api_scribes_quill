@@ -289,7 +289,7 @@ export interface IMagicItems extends Document {
 
 export interface IItem extends Document {
   name: string;
-  quantity: number;
+  quantity?: number;
   weight: number;
   description?: string;
   cost?: string;
