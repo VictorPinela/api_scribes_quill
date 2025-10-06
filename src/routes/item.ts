@@ -7,7 +7,7 @@ router.use(authenticateToken);
 
 router.get("/", async (req: AuthenticatedRequest, res: Response) => {
   try {
-    const item = await Item.find();
+    const item = await Item.find().sort({ name: 1 });
     res.json(item);
   } catch (error: any) {
     res

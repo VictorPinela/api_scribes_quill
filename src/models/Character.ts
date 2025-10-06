@@ -272,7 +272,7 @@ const item = new Schema(
   }
 );
 
-const currency = new Schema(
+const purse = new Schema(
   {
     copper: { type: Number, required: true, default: 0 },
     silver: { type: Number, required: true, default: 0 },
@@ -306,7 +306,7 @@ const inventory = new Schema(
   {
     equipment: { type: equipment, required: true },
     items: { type: [item], required: false, _id: false },
-    currency: { type: currency, required: true },
+    purse: { type: purse, required: true },
   },
   {
     required: true,

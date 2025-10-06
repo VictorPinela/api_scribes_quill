@@ -16,14 +16,14 @@ const ItemSchema = new Schema<IItem>(
     },
     weight: {
       type: Number,
-      required: true,
+      required: false,
     },
     description: {
       type: String,
       required: false,
     },
     cost: {
-      type: String,
+      type: Number,
       required: false,
     },
   },

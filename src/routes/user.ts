@@ -8,7 +8,8 @@ router.get("/", async (req: Request, res: Response) => {
     const users = await User.find()
       .select("-password")
       .select("-isVerified")
-      .populate("characters");
+      .populate("characters")
+      .sort({ name: 1 });
     res.json(users);
   } catch (error) {
     res.status(500).json({ message: "Erro ao buscar usuários", error });

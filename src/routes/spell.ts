@@ -7,7 +7,7 @@ router.use(authenticateToken);
 
 router.get("/", async (req: AuthenticatedRequest, res: Response) => {
   try {
-    const spell = await Spell.find();
+    const spell = await Spell.find().sort({ name: 1 });
     res.json(spell);
   } catch (error: any) {
     res

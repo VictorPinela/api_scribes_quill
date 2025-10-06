@@ -7,7 +7,7 @@ router.use(authenticateToken);
 
 router.get("/", async (req: AuthenticatedRequest, res: Response) => {
   try {
-    const feat = await Feat.find();
+    const feat = await Feat.find().sort({ name: 1 });
     res.json(feat);
   } catch (error: any) {
     res

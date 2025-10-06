@@ -7,7 +7,7 @@ router.use(authenticateToken);
 
 router.get("/", async (req: AuthenticatedRequest, res: Response) => {
   try {
-    const specie = await Specie.find();
+    const specie = await Specie.find().sort({ name: 1 });
     res.json(specie);
   } catch (error: any) {
     res

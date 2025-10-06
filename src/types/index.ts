@@ -132,7 +132,7 @@ export interface IHp {
   temporary: number;
 }
 
-export interface ICurrency {
+export interface Ipurse {
   copper: number;
   silver: number;
   electrum: number;
@@ -227,7 +227,7 @@ export interface ICharacter extends Document {
       attuned: string[];
     };
     items?: IItem[];
-    currency: ICurrency;
+    purse: Ipurse;
   };
   spells?: {
     spellcastingStatus: Status;
@@ -290,9 +290,9 @@ export interface IMagicItems extends Document {
 export interface IItem extends Document {
   name: string;
   quantity?: number;
-  weight: number;
+  weight?: number;
   description?: string;
-  cost?: string;
+  cost?: number;
 }
 
 export interface IFeat extends Document {

@@ -58,7 +58,7 @@ app.use("/classes", authenticateToken, classRoutes);
 app.use("/species", authenticateToken, specieRoutes);
 app.use("/spells", authenticateToken, spellRoutes);
 app.use("/feats", authenticateToken, featRoutes);
-app.use("/item", authenticateToken, itemRoutes);
+app.use("/items", authenticateToken, itemRoutes);
 
 app.use(/(.*)/, (req: Request, res: Response) => {
   res.status(404).json({ message: "Rota invalida" });
