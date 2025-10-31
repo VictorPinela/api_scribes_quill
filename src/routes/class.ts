@@ -8,86 +8,133 @@ router.use(authenticateToken);
 router.get("/", async (req: AuthenticatedRequest, res: Response) => {
   try {
     const dndClass = await Class.find().sort({ name: 1 });
-    res.json(dndClass);
+
+    return res.status(200).json(dndClass);
   } catch (error: any) {
-    res
-      .status(500)
-      .json({ message: "Erro ao buscar classe", error: error.message });
+    return res.status(500).json({
+      message: "Erro interno ao buscar classes",
+      error: error.message,
+    });
   }
 });
 
 router.get("/:name", async (req: AuthenticatedRequest, res: Response) => {
   try {
-    const dndClass = await Class.findOne({
-      name: req.params.name,
-    });
+    const { name } = req.params;
+
+    const dndClass = await Class.findOne({ name });
     if (!dndClass) {
-      return res.status(404).json({ message: "Classe não encontrada" });
+      return res.status(404).json({ message: "Erro ao buscar classe" });
     }
-    res.json(dndClass);
+
+    return res.status(200).json(dndClass);
   } catch (error: any) {
-    res
-      .status(500)
-      .json({ message: "Erro ao buscar classe", error: error.message });
+    return res.status(500).json({
+      message: "Erro interno ao buscar classe",
+      error: error.message,
+    });
   }
 });
 
 router.post("/", async (req: AuthenticatedRequest, res: Response) => {
   try {
+    const { name } = req.body;
+
+    if (!name) {
+      return res.status(400).json({
+        message: "Nome é obrigatório",
+      });
+    }
+
+    const existingClass = await Class.findOne({ name });
+    if (existingClass) {
+      return res.status(409).json({
+        message: "Já existe classe com este nome",
+      });
+    }
+
     const newClass = new Class(req.body);
-    const savedClass = await newClass.save();
-    res.status(201).json(savedClass);
+    await newClass.save();
+    return res.status(201).json(newClass);
   } catch (error: any) {
-    res
-      .status(400)
-      .json({ message: "Erro ao criar Classe", error: error.message });
+    if (error.name === "ValidationError") {
+      const errors = Object.values(error.errors).map((err: any) => err.message);
+      return res.status(400).json({
+        message: "Dados inválidos",
+        errors,
+      });
+    }
+
+    if (error.code === 11000) {
+      return res.status(409).json({
+        message: "Já existe classe com este nome",
+      });
+    }
+
+    return res.status(400).json({
+      message: "Erro ao criar classe",
+      error: error.message,
+    });
   }
 });
 
 router.put("/:name", async (req: AuthenticatedRequest, res: Response) => {
   try {
-    const dndClass = await Class.findOne({
-      name: req.params.name,
-    });
+    const { name } = req.params;
 
+    const dndClass = await Class.findOne({ name });
     if (!dndClass) {
-      return res.status(404).json({ message: "Classe não encontrada" });
+      return res.status(404).json({ message: "Erro ao buscar classe" });
     }
 
-    const updatedClass = await Class.findOneAndUpdate(
-      { name: req.params.name },
-      req.body,
-      {
-        new: true,
-        runValidators: true,
+    if (req.body.name && req.body.name !== name) {
+      const existingClass = await Class.findOne({ name: req.body.name });
+      if (existingClass) {
+        return res.status(409).json({
+          message: "Já existe classe com este nome",
+        });
       }
-    );
+    }
 
-    res.json(updatedClass);
+    const updatedClass = await dndClass.updateOne(req.body, {
+      new: true,
+      runValidators: true,
+    });
+
+    return res.status(200).json(updatedClass);
   } catch (error: any) {
-    res
-      .status(400)
-      .json({ message: "Erro ao atualizar classe", error: error.message });
+    if (error.name === "ValidationError") {
+      const errors = Object.values(error.errors).map((err: any) => err.message);
+      return res.status(400).json({
+        message: "Dados inválidos para atualização",
+        errors,
+      });
+    }
+
+    return res.status(400).json({
+      message: "Erro ao atualizar classe",
+      error: error.message,
+    });
   }
 });
 
 router.delete("/:name", async (req: AuthenticatedRequest, res: Response) => {
   try {
-    const dndClass = await Class.findOne({
-      name: req.params.name,
-    });
+    const { name } = req.params;
+
+    const dndClass = await Class.findOne({ name });
 
     if (!dndClass) {
-      return res.status(404).json({ message: "Classe não encontrada" });
+      return res.status(404).json({ message: "Erro ao buscar classe" });
     }
 
-    await Class.findOneAndDelete({ name: req.params.name });
-
-    res.json({ message: "Classe deletada com sucesso" });
+    await dndClass.deleteOne();
+    return res.status(200).json({ message: "Sucesso em deletar classe" });
   } catch (error: any) {
-    res
-      .status(500)
-      .json({ message: "Erro ao deletar classe", error: error.message });
+    res.status(500).json({
+      message: "Erro interno ao deletar classe",
+      error: error.message,
+    });
   }
 });
 

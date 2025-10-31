@@ -1,13 +1,13 @@
 import jwt from "jsonwebtoken";
 import ms from "ms";
-import { IUser } from "../types";
+import { UserInterface } from "../models/User";
 
 export interface JwtPayload {
   userId: string;
   email: string;
 }
 
-export const generateToken = (user: IUser): string => {
+export const generateToken = (user: UserInterface): string => {
   const id = user._id?.toString();
   if (id === undefined) throw new Error("userId Invalido");
   const payload: JwtPayload = {

@@ -1,14 +1,17 @@
 import { Document, Schema, model } from "mongoose";
+import { Features } from "../types";
 
-export interface ItemInterface extends Document {
+export interface MagicItemInterface extends Document {
   name: string;
-  consumable: boolean;
   weight: number;
+  consumable: boolean;
+  requiresAttunement: boolean;
   description?: string;
   cost: number;
+  features: Features["FeaturesInterface"][];
 }
 
-const ItemSchema = new Schema<ItemInterface>(
+const MagicItemSchema = new Schema<MagicItemInterface>(
   {
     name: {
       type: String,
@@ -21,8 +24,10 @@ const ItemSchema = new Schema<ItemInterface>(
     },
     consumable: { type: Boolean, required: true, default: false },
     weight: { type: Number, required: true, default: 0 },
+    requiresAttunement: { type: Boolean, required: true, default: false },
     description: { type: String, required: false },
     cost: { type: Number, required: true, default: 0 },
+    features: { type: [Features.FeaturesSchema], required: true },
   },
   {
     timestamps: false,
@@ -30,4 +35,7 @@ const ItemSchema = new Schema<ItemInterface>(
   }
 );
 
-export const Item = model<ItemInterface>("Item", ItemSchema);
+export const MagicItem = model<MagicItemInterface>(
+  "MagicItem",
+  MagicItemSchema
+);

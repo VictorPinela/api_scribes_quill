@@ -1,7 +1,12 @@
-import { Schema, model } from "mongoose";
-import { IBlacklistedToken } from "../types";
+import { Schema, Types, model, Document } from "mongoose";
 
-const BlacklistedTokenSchema = new Schema<IBlacklistedToken>({
+export interface BlacklistedTokenInterface extends Document {
+  token: string;
+  expiresAt: Date;
+  userId: Types.ObjectId;
+}
+
+const BlacklistedTokenSchema = new Schema<BlacklistedTokenInterface>({
   token: {
     type: String,
     required: true,
@@ -19,7 +24,7 @@ const BlacklistedTokenSchema = new Schema<IBlacklistedToken>({
   },
 });
 
-export const BlacklistedToken = model<IBlacklistedToken>(
+export const BlacklistedToken = model<BlacklistedTokenInterface>(
   "BlacklistedToken",
   BlacklistedTokenSchema
 );

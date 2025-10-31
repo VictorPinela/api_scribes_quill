@@ -1,5 +1,5 @@
 import express, { Request, Response } from "express";
-import { Item } from "../models/Item";
+import { Tool } from "../models/Tool";
 import { AuthenticatedRequest, authenticateToken } from "../middleware/auth";
 
 const router = express.Router();
@@ -7,12 +7,12 @@ router.use(authenticateToken);
 
 router.get("/", async (req: AuthenticatedRequest, res: Response) => {
   try {
-    const item = await Item.find().sort({ name: 1 });
+    const tool = await Tool.find().sort({ name: 1 });
 
-    return res.status(200).json(item);
+    return res.status(200).json(tool);
   } catch (error: any) {
     return res.status(500).json({
-      message: "Erro interno ao buscar itens",
+      message: "Erro interno ao buscar ferramentas",
       error: error.message,
     });
   }
@@ -22,15 +22,15 @@ router.get("/:name", async (req: AuthenticatedRequest, res: Response) => {
   try {
     const { name } = req.params;
 
-    const item = await Item.findOne({ name });
-    if (!item) {
-      return res.status(404).json({ message: "Erro ao buscar item" });
+    const tool = await Tool.findOne({ name });
+    if (!tool) {
+      return res.status(404).json({ message: "Erro ao buscar ferramenta" });
     }
 
-    return res.status(200).json(item);
+    return res.status(200).json(tool);
   } catch (error: any) {
     return res.status(500).json({
-      message: "Erro interno ao buscar item",
+      message: "Erro interno ao buscar ferramenta",
       error: error.message,
     });
   }
@@ -38,7 +38,7 @@ router.get("/:name", async (req: AuthenticatedRequest, res: Response) => {
 
 router.post("/", async (req: AuthenticatedRequest, res: Response) => {
   try {
-    const { name } = req.body;
+    const { name, ability, ...rest } = req.body;
 
     if (!name) {
       return res.status(400).json({
@@ -46,16 +46,23 @@ router.post("/", async (req: AuthenticatedRequest, res: Response) => {
       });
     }
 
-    const existingItem = await Item.findOne({ name });
-    if (existingItem) {
+    const existingTool = await Tool.findOne({ name });
+    if (existingTool) {
       return res.status(409).json({
-        message: "Já existe item com este nome",
+        message: "Já existe ferramenta com este nome",
       });
     }
 
-    const newItem = new Item(req.body);
-    await newItem.save();
-    return res.status(201).json(newItem);
+    const correctedAbility =
+      ability === "inteligência" ? "inteligencia" : ability;
+
+    const newTool = new Tool({
+      name,
+      ability: correctedAbility,
+      ...rest,
+    });
+    await newTool.save();
+    return res.status(201).json(newTool);
   } catch (error: any) {
     if (error.name === "ValidationError") {
       const errors = Object.values(error.errors).map((err: any) => err.message);
@@ -67,12 +74,12 @@ router.post("/", async (req: AuthenticatedRequest, res: Response) => {
 
     if (error.code === 11000) {
       return res.status(409).json({
-        message: "Já existe item com este nome",
+        message: "Já existe ferramenta com este nome",
       });
     }
 
     return res.status(400).json({
-      message: "Erro ao criar item",
+      message: "Erro ao criar ferramenta",
       error: error.message,
     });
   }
@@ -82,26 +89,26 @@ router.put("/:name", async (req: AuthenticatedRequest, res: Response) => {
   try {
     const { name } = req.params;
 
-    const item = await Item.findOne({ name });
-    if (!item) {
-      return res.status(404).json({ message: "Erro ao buscar item" });
+    const tool = await Tool.findOne({ name });
+    if (!tool) {
+      return res.status(404).json({ message: "Erro ao buscar ferramenta" });
     }
 
     if (req.body.name && req.body.name !== name) {
-      const existingItem = await Item.findOne({ name: req.body.name });
-      if (existingItem) {
+      const existingTool = await Tool.findOne({ name: req.body.name });
+      if (existingTool) {
         return res.status(409).json({
-          message: "Já existe item com este nome",
+          message: "Já existe ferramenta com este nome",
         });
       }
     }
 
-    const updatedItem = await item.updateOne(req.body, {
+    const updatedTool = await tool.updateOne(req.body, {
       new: true,
       runValidators: true,
     });
 
-    return res.status(200).json(updatedItem);
+    return res.status(200).json(updatedTool);
   } catch (error: any) {
     if (error.name === "ValidationError") {
       const errors = Object.values(error.errors).map((err: any) => err.message);
@@ -112,7 +119,7 @@ router.put("/:name", async (req: AuthenticatedRequest, res: Response) => {
     }
 
     return res.status(400).json({
-      message: "Erro ao atualizar item",
+      message: "Erro ao atualizar ferramenta",
       error: error.message,
     });
   }
@@ -122,17 +129,17 @@ router.delete("/:name", async (req: AuthenticatedRequest, res: Response) => {
   try {
     const { name } = req.params;
 
-    const item = await Item.findOne({ name });
+    const tool = await Tool.findOne({ name });
 
-    if (!item) {
-      return res.status(404).json({ message: "Erro ao buscar item" });
+    if (!tool) {
+      return res.status(404).json({ message: "Erro ao buscar ferramenta" });
     }
 
-    await item.deleteOne();
-    return res.status(200).json({ message: "Sucesso em deletar item" });
+    await tool.deleteOne();
+    return res.status(200).json({ message: "Sucesso em deletar ferramenta" });
   } catch (error: any) {
     res.status(500).json({
-      message: "Erro interno ao deletar item",
+      message: "Erro interno ao deletar ferramenta",
       error: error.message,
     });
   }

@@ -6,6 +6,7 @@ yarn-debug.log*
 yarn-error.log*
 package-lock.json
 yarn.lock
+Apadrão.ts
 
 # Variáveis de ambiente (NUNCA versione .env!)
 .env

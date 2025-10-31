@@ -1,7 +1,17 @@
-import { Schema, model } from "mongoose";
-import { ISpecie } from "../types";
+import { Schema, model, Document } from "mongoose";
+import { Features, Speeds } from "../types";
 
-const SpecieSchema = new Schema<ISpecie>(
+export interface SpecieInterface extends Document {
+  name: string;
+  creatureType: string;
+  size: string;
+  speeds: Speeds["SpeedsInterface"];
+  languages: string[];
+  features: Features["FeaturesInterface"];
+  description?: string;
+}
+
+const SpecieSchema = new Schema<SpecieInterface>(
   {
     name: {
       type: String,
@@ -9,6 +19,8 @@ const SpecieSchema = new Schema<ISpecie>(
       unique: true,
       trim: true,
       index: true,
+      lowercase: true,
+      _id: true,
     },
     creatureType: {
       type: String,
@@ -18,7 +30,7 @@ const SpecieSchema = new Schema<ISpecie>(
       type: String,
       required: true,
     },
-    speed: {
+    speeds: {
       movement: {
         type: Number,
         required: true,
@@ -41,11 +53,8 @@ const SpecieSchema = new Schema<ISpecie>(
       },
     },
     languages: { type: [String], required: true },
-    traits: { type: [String], required: false },
-    info: {
-      type: String,
-      required: false,
-    },
+    features: { type: [String], required: false },
+    description: { type: String, required: false },
   },
   {
     timestamps: false,
@@ -53,4 +62,4 @@ const SpecieSchema = new Schema<ISpecie>(
   }
 );
 
-export const Specie = model<ISpecie>("Specie", SpecieSchema);
+export const Specie = model<SpecieInterface>("Specie", SpecieSchema);

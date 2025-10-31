@@ -65,6 +65,8 @@ router.post("/register", async (req: Request, res: Response) => {
       password,
     });
 
+    console.log(user);
+
     res.status(201).json({
       message:
         "Usuário criado com sucesso. Verifique seu email para ativar a conta.",

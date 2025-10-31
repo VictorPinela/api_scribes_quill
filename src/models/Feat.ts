@@ -1,18 +1,16 @@
-import { Schema, model } from "mongoose";
-import { enumCategory, IFeat } from "../types";
+import { Document, Schema, model } from "mongoose";
+import { FeatCategory, Features } from "../types";
 
-const benefit = {
-  name: {
-    type: String,
-    required: true,
-  },
-  description: {
-    type: String,
-    required: true,
-  },
-};
+export interface FeatInterface extends Document {
+  name: string;
+  category: FeatCategory["FeatCategories"];
+  prerequisites: string[];
+  benefits: Features["FeaturesInterface"][];
+  repeatable: boolean;
+  description?: string;
+}
 
-const FeatSchema = new Schema<IFeat>(
+const FeatSchema = new Schema<FeatInterface>(
   {
     name: {
       type: String,
@@ -20,25 +18,21 @@ const FeatSchema = new Schema<IFeat>(
       unique: true,
       trim: true,
       index: true,
+      lowercase: true,
+      _id: true,
     },
     category: {
       type: String,
       required: true,
-      enum: enumCategory,
+      enum: FeatCategory.enumFeatCategory,
     },
-    prerequisite: {
-      type: [String],
-      required: false,
-    },
-    benefit: {
-      type: [benefit],
-      required: true,
-      _id: false,
-    },
-    repeatable: {
-      type: Boolean,
+    prerequisites: { type: [String], required: false },
+    benefits: {
+      type: [Features.FeaturesSchema],
       required: true,
     },
+    repeatable: { type: Boolean, required: true, default: false },
+    description: { type: String, required: false },
   },
   {
     timestamps: false,
@@ -46,4 +40,4 @@ const FeatSchema = new Schema<IFeat>(
   }
 );
 
-export const Feat = model<IFeat>("Feat", FeatSchema);
+export const Feat = model<FeatInterface>("Feat", FeatSchema);

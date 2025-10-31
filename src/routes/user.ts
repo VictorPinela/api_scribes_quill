@@ -5,11 +5,7 @@ const router = express.Router();
 
 router.get("/", async (req: Request, res: Response) => {
   try {
-    const users = await User.find()
-      .select("-password")
-      .select("-isVerified")
-      .populate("characters")
-      .sort({ name: 1 });
+    const users = await User.find().sort({ name: 1 });
     res.json(users);
   } catch (error) {
     res.status(500).json({ message: "Erro ao buscar usuários", error });
@@ -41,7 +37,8 @@ router.put("/:id", async (req: Request, res: Response) => {
       { new: true, runValidators: true }
     )
       .select("-password")
-      .select("-isVerified");
+      .select("-isVerified")
+      .populate("characters");
 
     if (!updatedUser) {
       return res.status(404).json({ message: "Usuário não encontrado" });

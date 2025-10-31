@@ -1,8 +1,22 @@
-import { Schema, model } from "mongoose";
+import { Document, Schema, Types, model } from "mongoose";
 import bcrypt from "bcryptjs";
-import { IUser } from "../types";
 
-const UserSchema = new Schema<IUser>(
+export interface UserInterface extends Document {
+  name: string;
+  email: string;
+  password: string;
+  role: string;
+  isVerified: boolean;
+  verificationToken?: string | undefined;
+  verificationTokenExpires?: Date | undefined;
+  resetPasswordToken?: string | undefined;
+  resetPasswordExpires?: Date | undefined;
+  createdAt: string;
+  characters?: Types.ObjectId;
+  comparePassword(candidatePassword: string): Promise<boolean>;
+}
+
+const UserSchema = new Schema<UserInterface>(
   {
     name: {
       type: String,
@@ -49,6 +63,11 @@ const UserSchema = new Schema<IUser>(
       type: Date,
       required: false,
     },
+    characters: {
+      type: Schema.Types.ObjectId,
+      ref: "Character",
+      required: false,
+    },
     // preferences: {
     //   theme: {
     //     type: String,
@@ -68,13 +87,7 @@ const UserSchema = new Schema<IUser>(
   }
 );
 
-UserSchema.virtual(`characters`, {
-  ref: "Character",
-  localField: "_id",
-  foreignField: "userId",
-});
-
-UserSchema.pre<IUser>("save", async function (next) {
+UserSchema.pre<UserInterface>("save", async function (next) {
   if (!this.isModified("password")) return next();
   try {
     const salt = await bcrypt.genSalt(12);
@@ -95,4 +108,4 @@ UserSchema.methods.comparePassword = async function (
   }
 };
 
-export const User = model<IUser>("User", UserSchema);
+export const User = model<UserInterface>("User", UserSchema);

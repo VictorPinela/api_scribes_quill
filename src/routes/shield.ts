@@ -1,5 +1,5 @@
 import express, { Request, Response } from "express";
-import { Item } from "../models/Item";
+import { Shield } from "../models/Shield";
 import { AuthenticatedRequest, authenticateToken } from "../middleware/auth";
 
 const router = express.Router();
@@ -7,12 +7,12 @@ router.use(authenticateToken);
 
 router.get("/", async (req: AuthenticatedRequest, res: Response) => {
   try {
-    const item = await Item.find().sort({ name: 1 });
+    const shield = await Shield.find().sort({ name: 1 });
 
-    return res.status(200).json(item);
+    return res.status(200).json(shield);
   } catch (error: any) {
     return res.status(500).json({
-      message: "Erro interno ao buscar itens",
+      message: "Erro interno ao buscar escudos",
       error: error.message,
     });
   }
@@ -22,15 +22,15 @@ router.get("/:name", async (req: AuthenticatedRequest, res: Response) => {
   try {
     const { name } = req.params;
 
-    const item = await Item.findOne({ name });
-    if (!item) {
-      return res.status(404).json({ message: "Erro ao buscar item" });
+    const shield = await Shield.findOne({ name });
+    if (!shield) {
+      return res.status(404).json({ message: "Erro ao buscar escudo" });
     }
 
-    return res.status(200).json(item);
+    return res.status(200).json(shield);
   } catch (error: any) {
     return res.status(500).json({
-      message: "Erro interno ao buscar item",
+      message: "Erro interno ao buscar escudo",
       error: error.message,
     });
   }
@@ -46,16 +46,16 @@ router.post("/", async (req: AuthenticatedRequest, res: Response) => {
       });
     }
 
-    const existingItem = await Item.findOne({ name });
-    if (existingItem) {
+    const existingShield = await Shield.findOne({ name });
+    if (existingShield) {
       return res.status(409).json({
-        message: "Já existe item com este nome",
+        message: "Já existe escudo com este nome",
       });
     }
 
-    const newItem = new Item(req.body);
-    await newItem.save();
-    return res.status(201).json(newItem);
+    const newShield = new Shield(req.body);
+    await newShield.save();
+    return res.status(201).json(newShield);
   } catch (error: any) {
     if (error.name === "ValidationError") {
       const errors = Object.values(error.errors).map((err: any) => err.message);
@@ -67,12 +67,12 @@ router.post("/", async (req: AuthenticatedRequest, res: Response) => {
 
     if (error.code === 11000) {
       return res.status(409).json({
-        message: "Já existe item com este nome",
+        message: "Já existe escudo com este nome",
       });
     }
 
     return res.status(400).json({
-      message: "Erro ao criar item",
+      message: "Erro ao criar escudo",
       error: error.message,
     });
   }
@@ -82,26 +82,26 @@ router.put("/:name", async (req: AuthenticatedRequest, res: Response) => {
   try {
     const { name } = req.params;
 
-    const item = await Item.findOne({ name });
-    if (!item) {
-      return res.status(404).json({ message: "Erro ao buscar item" });
+    const shield = await Shield.findOne({ name });
+    if (!shield) {
+      return res.status(404).json({ message: "Erro ao buscar escudo" });
     }
 
     if (req.body.name && req.body.name !== name) {
-      const existingItem = await Item.findOne({ name: req.body.name });
-      if (existingItem) {
+      const existingShield = await Shield.findOne({ name: req.body.name });
+      if (existingShield) {
         return res.status(409).json({
-          message: "Já existe item com este nome",
+          message: "Já existe escudo com este nome",
         });
       }
     }
 
-    const updatedItem = await item.updateOne(req.body, {
+    const updatedShield = await shield.updateOne(req.body, {
       new: true,
       runValidators: true,
     });
 
-    return res.status(200).json(updatedItem);
+    return res.status(200).json(updatedShield);
   } catch (error: any) {
     if (error.name === "ValidationError") {
       const errors = Object.values(error.errors).map((err: any) => err.message);
@@ -112,7 +112,7 @@ router.put("/:name", async (req: AuthenticatedRequest, res: Response) => {
     }
 
     return res.status(400).json({
-      message: "Erro ao atualizar item",
+      message: "Erro ao atualizar escudo",
       error: error.message,
     });
   }
@@ -122,17 +122,17 @@ router.delete("/:name", async (req: AuthenticatedRequest, res: Response) => {
   try {
     const { name } = req.params;
 
-    const item = await Item.findOne({ name });
+    const shield = await Shield.findOne({ name });
 
-    if (!item) {
-      return res.status(404).json({ message: "Erro ao buscar item" });
+    if (!shield) {
+      return res.status(404).json({ message: "Erro ao buscar escudo" });
     }
 
-    await item.deleteOne();
-    return res.status(200).json({ message: "Sucesso em deletar item" });
+    await shield.deleteOne();
+    return res.status(200).json({ message: "Sucesso em deletar escudo" });
   } catch (error: any) {
     res.status(500).json({
-      message: "Erro interno ao deletar item",
+      message: "Erro interno ao deletar escudo",
       error: error.message,
     });
   }

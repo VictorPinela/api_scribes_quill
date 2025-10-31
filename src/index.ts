@@ -12,6 +12,11 @@ import specieRoutes from "./routes/specie";
 import spellRoutes from "./routes/spell";
 import featRoutes from "./routes/feat";
 import itemRoutes from "./routes/item";
+import armorRoutes from "./routes/armor";
+import magicItemRoutes from "./routes/magicItem";
+import shieldRoutes from "./routes/shield";
+import toolRoutes from "./routes/tool";
+import weaponRoutes from "./routes/weapon";
 
 dotenv.config({ quiet: true });
 
@@ -45,7 +50,7 @@ mongoose
     process.exit(1);
   });
 
-app.get("/", (req: Request, res: Response) => {
+app.get("/", async (req: Request, res: Response) => {
   res.json({ message: "🚀 API do Scribe's Quill está funcionando!" });
 });
 
@@ -59,6 +64,11 @@ app.use("/species", authenticateToken, specieRoutes);
 app.use("/spells", authenticateToken, spellRoutes);
 app.use("/feats", authenticateToken, featRoutes);
 app.use("/items", authenticateToken, itemRoutes);
+app.use("/armors", authenticateToken, armorRoutes);
+app.use("/magicItems", authenticateToken, magicItemRoutes);
+app.use("/shields", authenticateToken, shieldRoutes);
+app.use("/tools", authenticateToken, toolRoutes);
+app.use("/weapons", authenticateToken, weaponRoutes);
 
 app.use(/(.*)/, (req: Request, res: Response) => {
   res.status(404).json({ message: "Rota invalida" });
@@ -66,4 +76,15 @@ app.use(/(.*)/, (req: Request, res: Response) => {
 
 app.listen(port, () => {
   console.log(`⚡ Servidor rodando em http://localhost:${port}`);
+});
+
+// Tratamento de erros não capturados
+process.on("unhandledRejection", (reason, promise) => {
+  console.error("Rejeição não tratada em:", promise, "motivo:", reason);
+});
+
+process.on("uncaughtException", (error) => {
+  console.error("Exceção não capturada:", error);
+  // Não force a saída imediatamente, deixe o nodemon reiniciar
+  process.exit(1);
 });

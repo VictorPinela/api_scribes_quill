@@ -8,86 +8,133 @@ router.use(authenticateToken);
 router.get("/", async (req: AuthenticatedRequest, res: Response) => {
   try {
     const feat = await Feat.find().sort({ name: 1 });
-    res.json(feat);
+
+    return res.status(200).json(feat);
   } catch (error: any) {
-    res
-      .status(500)
-      .json({ message: "Erro ao buscar talento", error: error.message });
+    return res.status(500).json({
+      message: "Erro interno ao buscar talentos",
+      error: error.message,
+    });
   }
 });
 
 router.get("/:name", async (req: AuthenticatedRequest, res: Response) => {
   try {
-    const feat = await Feat.findOne({
-      name: req.params.name,
-    });
+    const { name } = req.params;
+
+    const feat = await Feat.findOne({ name });
     if (!feat) {
-      return res.status(404).json({ message: "Talento não encontrado" });
+      return res.status(404).json({ message: "Erro ao buscar talento" });
     }
-    res.json(feat);
+
+    return res.status(200).json(feat);
   } catch (error: any) {
-    res
-      .status(500)
-      .json({ message: "Erro ao buscar talento", error: error.message });
+    return res.status(500).json({
+      message: "Erro interno ao buscar talento",
+      error: error.message,
+    });
   }
 });
 
 router.post("/", async (req: AuthenticatedRequest, res: Response) => {
   try {
+    const { name } = req.body;
+
+    if (!name) {
+      return res.status(400).json({
+        message: "Nome é obrigatório",
+      });
+    }
+
+    const existingFeat = await Feat.findOne({ name });
+    if (existingFeat) {
+      return res.status(409).json({
+        message: "Já existe talento com este nome",
+      });
+    }
+
     const newFeat = new Feat(req.body);
-    const savedFeat = await newFeat.save();
-    res.status(201).json(savedFeat);
+    await newFeat.save();
+    return res.status(201).json(newFeat);
   } catch (error: any) {
-    res
-      .status(400)
-      .json({ message: "Erro ao criar talento", error: error.message });
+    if (error.name === "ValidationError") {
+      const errors = Object.values(error.errors).map((err: any) => err.message);
+      return res.status(400).json({
+        message: "Dados inválidos",
+        errors,
+      });
+    }
+
+    if (error.code === 11000) {
+      return res.status(409).json({
+        message: "Já existe talento com este nome",
+      });
+    }
+
+    return res.status(400).json({
+      message: "Erro ao criar talento",
+      error: error.message,
+    });
   }
 });
 
 router.put("/:name", async (req: AuthenticatedRequest, res: Response) => {
   try {
-    const feat = await Feat.findOne({
-      name: req.params.name,
-    });
+    const { name } = req.params;
 
+    const feat = await Feat.findOne({ name });
     if (!feat) {
-      return res.status(404).json({ message: "Talento não encontrado" });
+      return res.status(404).json({ message: "Erro ao buscar talento" });
     }
 
-    const updatedFeat = await Feat.findOneAndUpdate(
-      { name: req.params.name },
-      req.body,
-      {
-        new: true,
-        runValidators: true,
+    if (req.body.name && req.body.name !== name) {
+      const existingFeat = await Feat.findOne({ name: req.body.name });
+      if (existingFeat) {
+        return res.status(409).json({
+          message: "Já existe talento com este nome",
+        });
       }
-    );
+    }
 
-    res.json(updatedFeat);
+    const updatedFeat = await feat.updateOne(req.body, {
+      new: true,
+      runValidators: true,
+    });
+
+    return res.status(200).json(updatedFeat);
   } catch (error: any) {
-    res
-      .status(400)
-      .json({ message: "Erro ao atualizar talento", error: error.message });
+    if (error.name === "ValidationError") {
+      const errors = Object.values(error.errors).map((err: any) => err.message);
+      return res.status(400).json({
+        message: "Dados inválidos para atualização",
+        errors,
+      });
+    }
+
+    return res.status(400).json({
+      message: "Erro ao atualizar talento",
+      error: error.message,
+    });
   }
 });
 
 router.delete("/:name", async (req: AuthenticatedRequest, res: Response) => {
   try {
-    const feat = await Feat.findOne({
-      name: req.params.name,
-    });
+    const { name } = req.params;
+
+    const feat = await Feat.findOne({ name });
 
     if (!feat) {
-      return res.status(404).json({ message: "Talento não encontrado" });
+      return res.status(404).json({ message: "Erro ao buscar talento" });
     }
 
-    await Feat.findOneAndDelete({ name: req.params.name });
-
-    res.json({ message: "Talento deletado com sucesso" });
+    await feat.deleteOne();
+    return res.status(200).json({ message: "Sucesso em deletar talento" });
   } catch (error: any) {
-    res
-      .status(500)
-      .json({ message: "Erro ao deletar talento", error: error.message });
+    res.status(500).json({
+      message: "Erro interno ao deletar talento",
+      error: error.message,
+    });
   }
 });
 

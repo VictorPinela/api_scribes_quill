@@ -1,14 +1,17 @@
 import { Document, Schema, model } from "mongoose";
+import { Ability } from "../types";
 
-export interface ItemInterface extends Document {
+export interface ToolInterface extends Document {
   name: string;
-  consumable: boolean;
+  ability?: Ability["Abilities"];
+  utilize?: string;
+  craft?: string;
   weight: number;
   description?: string;
   cost: number;
 }
 
-const ItemSchema = new Schema<ItemInterface>(
+const ToolSchema = new Schema<ToolInterface>(
   {
     name: {
       type: String,
@@ -19,7 +22,9 @@ const ItemSchema = new Schema<ItemInterface>(
       lowercase: true,
       _id: true,
     },
-    consumable: { type: Boolean, required: true, default: false },
+    ability: { type: String, required: false, enum: Ability.enumAbilities },
+    utilize: { type: String, required: false },
+    craft: { type: String, required: false },
     weight: { type: Number, required: true, default: 0 },
     description: { type: String, required: false },
     cost: { type: Number, required: true, default: 0 },
@@ -30,4 +35,4 @@ const ItemSchema = new Schema<ItemInterface>(
   }
 );
 
-export const Item = model<ItemInterface>("Item", ItemSchema);
+export const Tool = model<ToolInterface>("Tool", ToolSchema);
